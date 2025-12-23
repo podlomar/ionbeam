@@ -4,8 +4,9 @@ import typescript from '@rollup/plugin-typescript';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import postcss from 'rollup-plugin-postcss';
 import fs from 'node:fs/promises';
+import { glob } from 'glob';
 
-const buildTs = async () => {
+const buildServer = async () => {
   try {
     const bundle = await rollup({
       input: 'src/server.tsx',
@@ -46,6 +47,59 @@ const buildTs = async () => {
     process.exit(1);
   }
 }
+
+const buildClient = async () => {
+  try {
+    // Find all client.ts/tsx/js/jsx files in components
+    const clientFiles = await glob('src/**/client.{ts,tsx,js,jsx}');
+
+    if (clientFiles.length === 0) {
+      console.log('No client files found, skipping client bundle');
+      return;
+    }
+
+    const bundle = await rollup({
+      input: clientFiles,
+      plugins: [
+        postcss({
+          modules: {
+            generateScopedName: '[local]-[hash:8]',
+            localsConvention: 'camelCaseOnly',
+          },
+          inject: true,
+        }),
+        nodeResolve({
+          extensions: ['.ts', '.tsx', '.js', '.jsx'],
+          browser: true,
+        }),
+        typescript({
+          tsconfig: 'tsconfig.json',
+          // declaration: false,
+          // declarationMap: false,
+          sourceMap: true,
+          outDir: 'dist/static',
+          compilerOptions: {
+            lib: ['ES2015', 'DOM'],
+          },
+        }),
+      ],
+    });
+
+    await bundle.write({
+      dir: 'dist/static',
+      entryFileNames: 'client.js',
+      format: 'iife',
+      sourcemap: true,
+    });
+
+    await bundle.close();
+  } catch (error) {
+    console.error('Client build failed:', error);
+    process.exit(1);
+  }
+}
+
+const buildTs = gulp.parallel(buildServer, buildClient);
 
 const watchTs = () => {
   return gulp.watch('src/**/*.{ts,tsx}', buildTs);
