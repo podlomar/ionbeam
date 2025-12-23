@@ -17,14 +17,14 @@ const buildServer = async () => {
       plugins: [
         postcss({
           modules: {
-            generateScopedName: '[local]-[hash:8]',
+            generateScopedName: '[local]-[hash:6]',
             localsConvention: 'camelCaseOnly',
           },
           extract: 'server.css',
           inject: false,
         }),
         nodeResolve({
-          extensions: ['.ts', '.tsx', '.js', '.jsx'],
+          extensions: ['.ts', '.tsx'],
         }),
         typescript({
           tsconfig: 'tsconfig.json',
@@ -50,8 +50,7 @@ const buildServer = async () => {
 
 const buildClient = async () => {
   try {
-    // Find all client.ts/tsx/js/jsx files in components
-    const clientFiles = await glob('src/**/client.{ts,tsx,js,jsx}');
+    const clientFiles = await glob('src/**/client.ts}');
 
     if (clientFiles.length === 0) {
       console.log('No client files found, skipping client bundle');
@@ -69,28 +68,41 @@ const buildClient = async () => {
           inject: true,
         }),
         nodeResolve({
-          extensions: ['.ts', '.tsx', '.js', '.jsx'],
+          extensions: ['.ts', '.tsx'],
           browser: true,
         }),
         typescript({
           tsconfig: 'tsconfig.json',
-          // declaration: false,
-          // declarationMap: false,
+          declaration: false,
+          declarationMap: false,
           sourceMap: true,
           outDir: 'dist/static',
           compilerOptions: {
-            lib: ['ES2015', 'DOM'],
+            lib: ['ES2022', 'DOM'],
           },
         }),
       ],
     });
 
-    await bundle.write({
+    const { output } = await bundle.write({
       dir: 'dist/static',
-      entryFileNames: 'client.js',
+      entryFileNames: 'client-[hash:8].js',
       format: 'iife',
       sourcemap: true,
     });
+
+    // Generate manifest file
+    const manifest = {};
+    for (const chunk of output) {
+      if (chunk.type === 'chunk' && chunk.isEntry) {
+        manifest['client.js'] = chunk.fileName;
+      }
+    }
+
+    await fs.writeFile(
+      'dist/static/manifest.json',
+      JSON.stringify(manifest, null, 2)
+    );
 
     await bundle.close();
   } catch (error) {

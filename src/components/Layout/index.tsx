@@ -4,9 +4,10 @@ import './layout.css';
 interface Props {
   children: React.ReactNode;
   title?: string;
+  clientScript?: string;
 }
 
-export const Layout = ({ children, title = "IonCore" }: Props): JSX.Element => {
+export const Layout = ({ children, title = "IonCore", clientScript }: Props): JSX.Element => {
   return (
     <html lang="en">
       <head>
@@ -15,6 +16,7 @@ export const Layout = ({ children, title = "IonCore" }: Props): JSX.Element => {
         <meta name="description" content="IonCore - Pure SSR React Application Template" />
         <title>{title}</title>
         <link rel="stylesheet" href="/server.css" />
+        {clientScript && <script src={`/${clientScript}`} defer />}
       </head>
 
       <body>

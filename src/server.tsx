@@ -2,6 +2,7 @@ import { JSX } from 'react/jsx-runtime';
 import express, { Request, Response } from 'express';
 import { prerenderToNodeStream } from 'react-dom/static';
 import { HomePage } from './pages/HomePage/index.js';
+import { getAsset } from './utils/manifest.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,7 +18,8 @@ const render = async (component: JSX.Element, res: express.Response) => {
 };
 
 app.get('/', (req: Request, res: Response) => {
-  render(<HomePage />, res);
+  const clientScript = getAsset('client.js');
+  render(<HomePage clientScript={clientScript} />, res);
 });
 
 app.listen(PORT, () => {
