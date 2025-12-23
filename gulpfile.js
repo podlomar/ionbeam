@@ -1,38 +1,46 @@
 import gulp from 'gulp';
-import esbuild from 'esbuild';
-import cssModulesPlugin from 'esbuild-css-modules-plugin';
+import { rolldown } from 'rolldown';
+import LightningCSS from 'unplugin-lightningcss/rolldown';
 import fs from 'node:fs/promises';
 
 const buildTs = async () => {
-  return esbuild.build({
-    bundle: true,
-    platform: 'node',
-    format: 'esm',
-    packages: 'external',
-    logLevel: 'error',
-    sourcemap: 'external',
-    entryPoints: {
-      main: 'src/server.tsx'
-    },
-    loader: {
-      ".svg": "file",
-    },
-    assetNames: "img/[name]-[hash]",
-    tsconfig: 'tsconfig.json',
-    outbase: 'src',
-    outfile: 'dist/server.js',
-    resolveExtensions: ['.ts', '.tsx'],
-    plugins: [cssModulesPlugin({
-      force: true,
-      pattern: '[local]-[hash]',
-      localsConvention: 'camelCaseOnly',
-      namedExports: true,
-      inject: false,
-    })],
-  }).catch(() => {
-    console.error('Build failed');
+  try {
+    const bundle = await rolldown({
+      input: 'src/server.tsx',
+      external: (id) => {
+        // External all node_modules
+        return !id.startsWith('.') && !id.startsWith('/');
+      },
+      resolve: {
+        extensions: ['.ts', '.tsx', '.js', '.jsx'],
+      },
+      platform: 'node',
+      moduleTypes: {
+        '.svg': 'asset',
+      },
+      plugins: [
+        LightningCSS({
+          cssModules: {
+            pattern: '[local]-[hash]',
+            dashedIdents: false,
+          },
+        }),
+      ],
+    });
+
+    await bundle.write({
+      dir: 'dist',
+      entryFileNames: 'server.js',
+      format: 'esm',
+      sourcemap: true,
+      exports: 'auto',
+    });
+
+    await bundle.close();
+  } catch (error) {
+    console.error('Build failed:', error);
     process.exit(1);
-  });
+  }
 }
 
 const watchTs = () => {
