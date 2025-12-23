@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "nodemon",
-    "dev": "gulp watch --color && nodemon",
+    "dev": "gulp watch --color",
     "build": "gulp build --color"
   },
   "keywords": [
