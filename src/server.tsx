@@ -19,7 +19,8 @@ const render = async (component: JSX.Element, res: express.Response) => {
 
 app.get('/', (req: Request, res: Response) => {
   const clientScript = getAsset('client.js');
-  render(<HomePage clientScript={clientScript} />, res);
+  const styleSheet = getAsset('server.css');
+  render(<HomePage clientScript={clientScript} styleSheet={styleSheet} />, res);
 });
 
 app.listen(PORT, () => {

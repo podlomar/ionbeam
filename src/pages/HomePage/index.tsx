@@ -4,11 +4,16 @@ import { Container } from "../../components/Container/index.js";
 
 interface Props {
   clientScript?: string;
+  styleSheet?: string;
 }
 
-export const HomePage = ({ clientScript }: Props): JSX.Element => {
+export const HomePage = ({ clientScript, styleSheet }: Props): JSX.Element => {
   return (
-    <Layout title="Home Page" clientScript={clientScript}>
+    <Layout
+      title="Home Page"
+      clientScript={clientScript}
+      styleSheet={styleSheet}
+    >
       <Container>
         <h1>Home Page</h1>
       </Container>

@@ -5,9 +5,10 @@ interface Props {
   children: React.ReactNode;
   title?: string;
   clientScript?: string;
+  styleSheet?: string;
 }
 
-export const Layout = ({ children, title = "IonCore", clientScript }: Props): JSX.Element => {
+export const Layout = ({ children, title = "IonCore", clientScript, styleSheet }: Props): JSX.Element => {
   return (
     <html lang="en">
       <head>
@@ -15,7 +16,7 @@ export const Layout = ({ children, title = "IonCore", clientScript }: Props): JS
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content="IonCore - Pure SSR React Application Template" />
         <title>{title}</title>
-        <link rel="stylesheet" href="/server.css" />
+        {styleSheet && <link rel="stylesheet" href={`/${styleSheet}`} />}
         {clientScript && <script src={`/${clientScript}`} defer />}
       </head>
 

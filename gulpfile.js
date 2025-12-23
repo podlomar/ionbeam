@@ -5,6 +5,10 @@ import { nodeResolve } from '@rollup/plugin-node-resolve';
 import postcss from 'rollup-plugin-postcss';
 import fs from 'node:fs/promises';
 import { glob } from 'glob';
+import crypto from 'node:crypto';
+
+// Store CSS filename for manifest
+let cssFileName = null;
 
 const buildServer = async () => {
   try {
@@ -20,9 +24,33 @@ const buildServer = async () => {
             generateScopedName: '[local]-[hash:6]',
             localsConvention: 'camelCaseOnly',
           },
-          extract: 'static/server.css',
+          extract: true,
           inject: false,
         }),
+        // Custom plugin to hash and track CSS file
+        {
+          name: 'css-hash',
+          async generateBundle(options, bundle) {
+            // Find the CSS file in the bundle
+            for (const [fileName, asset] of Object.entries(bundle)) {
+              if (fileName.endsWith('.css') && asset.type === 'asset') {
+                // Generate hash from CSS content
+                const hash = crypto
+                  .createHash('sha256')
+                  .update(asset.source)
+                  .digest('hex')
+                  .substring(0, 8);
+
+                // Create new filename with hash
+                const newFileName = `static/server-${hash}.css`;
+                cssFileName = `server-${hash}.css`;
+
+                // Update the asset's fileName
+                asset.fileName = newFileName;
+              }
+            }
+          },
+        },
         nodeResolve({
           extensions: ['.ts', '.tsx'],
         }),
@@ -93,10 +121,17 @@ const buildClient = async () => {
 
     // Generate manifest file
     const manifest = {};
+
+    // Add client JS to manifest
     for (const chunk of output) {
       if (chunk.type === 'chunk' && chunk.isEntry) {
         manifest['client.js'] = chunk.fileName;
       }
+    }
+
+    // Add CSS filename from server build to manifest
+    if (cssFileName) {
+      manifest['server.css'] = cssFileName;
     }
 
     await fs.writeFile(
