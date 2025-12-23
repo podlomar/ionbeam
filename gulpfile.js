@@ -20,7 +20,7 @@ const buildServer = async () => {
             generateScopedName: '[local]-[hash:6]',
             localsConvention: 'camelCaseOnly',
           },
-          extract: 'server.css',
+          extract: 'static/server.css',
           inject: false,
         }),
         nodeResolve({
@@ -50,7 +50,7 @@ const buildServer = async () => {
 
 const buildClient = async () => {
   try {
-    const clientFiles = await glob('src/**/client.ts}');
+    const clientFiles = await glob('src/**/client.ts');
 
     if (clientFiles.length === 0) {
       console.log('No client files found, skipping client bundle');
@@ -111,24 +111,18 @@ const buildClient = async () => {
   }
 }
 
-const buildTs = gulp.parallel(buildServer, buildClient);
+const buildTs = gulp.series(
+  buildServer,
+  buildClient,
+);
 
 const watchTs = () => {
-  return gulp.watch('src/**/*.{ts,tsx}', buildTs);
-}
-
-const copyStyles = () => {
-  return gulp.src(['dist/server.css'], { allowEmpty: true })
-    .pipe(gulp.dest('dist/static'));
+  return gulp.watch('src/**/*.{ts,tsx,css}', buildTs);
 }
 
 const copyStaticFiles = () => {
   return gulp.src('src/static/**/*', { encoding: false })
     .pipe(gulp.dest('dist/static'));
-}
-
-const watchStyles = () => {
-  return gulp.watch('src/**/*.css', gulp.series(buildTs, copyStyles));
 }
 
 const watchStaticFiles = () => {
@@ -143,7 +137,6 @@ export const build = gulp.series(
   clean,
   buildTs,
   copyStaticFiles,
-  copyStyles,
 );
 
 export const watch = gulp.series(
@@ -151,6 +144,5 @@ export const watch = gulp.series(
   gulp.parallel(
     watchTs,
     watchStaticFiles,
-    watchStyles
   )
 );
