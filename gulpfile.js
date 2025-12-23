@@ -1,29 +1,34 @@
 import gulp from 'gulp';
-import { rolldown } from 'rolldown';
-import LightningCSS from 'unplugin-lightningcss/rolldown';
+import { rollup } from 'rollup';
+import typescript from '@rollup/plugin-typescript';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import postcss from 'rollup-plugin-postcss';
 import fs from 'node:fs/promises';
 
 const buildTs = async () => {
   try {
-    const bundle = await rolldown({
+    const bundle = await rollup({
       input: 'src/server.tsx',
       external: (id) => {
         // External all node_modules
         return !id.startsWith('.') && !id.startsWith('/');
       },
-      resolve: {
-        extensions: ['.ts', '.tsx', '.js', '.jsx'],
-      },
-      platform: 'node',
-      moduleTypes: {
-        '.svg': 'asset',
-      },
       plugins: [
-        LightningCSS({
-          cssModules: {
-            pattern: '[local]-[hash]',
-            dashedIdents: false,
+        postcss({
+          modules: {
+            generateScopedName: '[local]-[hash:8]',
+            localsConvention: 'camelCaseOnly',
           },
+          extract: 'server.css',
+          inject: false,
+        }),
+        nodeResolve({
+          extensions: ['.ts', '.tsx', '.js', '.jsx'],
+        }),
+        typescript({
+          tsconfig: 'tsconfig.json',
+          declaration: false,
+          sourceMap: true,
         }),
       ],
     });
@@ -33,7 +38,6 @@ const buildTs = async () => {
       entryFileNames: 'server.js',
       format: 'esm',
       sourcemap: true,
-      exports: 'auto',
     });
 
     await bundle.close();
