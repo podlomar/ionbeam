@@ -1,0 +1,25 @@
+{
+  "name": "ioncore-example-basic",
+  "version": "1.0.0",
+  "description": "Basic IonCore example application",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "ioncore dev",
+    "build": "ioncore build",
+    "start": "ioncore start"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "express": "^5.2.1",
+    "ioncore": "file:../../packages/ioncore",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.25",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "typescript": "^5.9.3"
+  }
+}

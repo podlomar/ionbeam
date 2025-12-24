@@ -1,0 +1,69 @@
+{
+  "name": "ioncore",
+  "version": "0.1.0",
+  "description": "A pure React SSR framework with automatic asset hashing and CSS modules",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "ioncore": "./bin/ioncore.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./server": {
+      "types": "./dist/server/index.d.ts",
+      "import": "./dist/server/index.js"
+    },
+    "./utils": {
+      "types": "./dist/utils/manifest.d.ts",
+      "import": "./dist/utils/manifest.js"
+    }
+  },
+  "files": [
+    "dist",
+    "bin"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "react",
+    "ssr",
+    "framework",
+    "server-side-rendering",
+    "css-modules"
+  ],
+  "author": {
+    "name": "Martin Podloucký",
+    "email": "podlouckymartin@gmail.com"
+  },
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "dependencies": {
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "@rollup/plugin-typescript": "^12.3.0",
+    "chokidar": "^4.0.3",
+    "commander": "^12.1.0",
+    "express": "^5.2.1",
+    "glob": "^13.0.0",
+    "postcss": "^8.5.6",
+    "postcss-modules": "^6.0.1",
+    "rollup": "^4.54.0",
+    "rollup-plugin-postcss": "^4.0.2",
+    "tslib": "^2.8.1",
+    "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^20.4.2",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3"
+  }
+}

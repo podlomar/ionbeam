@@ -1,163 +1,129 @@
-# IonCore
+# IonCore Monorepo
 
-A pure Server-Side Rendering (SSR) React web application template built with modern tools and best practices.
+A pure React SSR framework with automatic asset hashing, CSS modules, and zero configuration.
 
-## Features
+## Project Structure
 
-- ⚡ **Pure SSR**: Server-side rendered React components for optimal performance and SEO
-- 🚀 **React 19**: Built with the latest React version using JSX runtime
-- 📦 **ESBuild**: Fast bundling and TypeScript compilation
-- 🔄 **Hot Reload**: Development server with automatic rebuilds using Gulp and Nodemon
-- 📁 **CSS Modules**: Scoped CSS with hash-based class names
-- 🎯 **TypeScript**: Full TypeScript support with type safety
-- 🌐 **Express**: Lightweight web server framework
-- 📱 **Static Assets**: Optimized handling of static files and images
+This is a monorepo containing:
 
-## Technology Stack
-
-- **Frontend**: React 19, TypeScript
-- **Backend**: Express.js, Node.js
-- **Build Tools**: ESBuild, Gulp
-- **Development**: Nodemon for auto-restart
-- **Styling**: CSS Modules with ESBuild plugin
+- **`packages/ioncore`** - The core framework library (publishable to npm)
+- **`examples/basic-app`** - Example application showing how to use IonCore
 
 ## Getting Started
 
-### Prerequisites
+### One-Time Setup
 
-- Node.js (version 16 or higher)
-- npm or yarn
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd ioncore
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-### Development
-
-Start the development server with hot reload:
+Run this once to set everything up:
 
 ```bash
-npm run dev
+pnpm setup
 ```
 
-This command will:
-- Build the TypeScript files using Gulp and ESBuild
-- Watch for file changes
-- Automatically restart the server when changes are detected
-- Server runs on `http://localhost:3000` (or the port specified in PORT environment variable)
+This will:
+1. Install dependencies in both packages
+2. Build the library
+3. Link the library globally
+4. Link the library into the example app
 
-Start the server:
+### Running the Example
 
 ```bash
-npm start
+pnpm dev:example
 ```
 
-### Production Build
+This will start the example application at http://localhost:3000
 
-Build the application for production:
+## Development Workflow
+
+### Working on the Library
+
+1. Navigate to the library package:
 
 ```bash
-npm run build
+cd packages/ioncore
 ```
 
-## How It Works
+2. Make your changes to the source files in `src/`
 
-### Server-Side Rendering
+3. Build the library:
 
-IonCore uses React's `prerenderToNodeStream` to render React components on the server:
+```bash
+pnpm build
+```
+
+The example app will automatically use the updated version since it's linked.
+
+### Manual Linking (if needed)
+
+If you need to re-link the packages:
+
+```bash
+# In packages/ioncore
+pnpm link --global
+
+# In examples/basic-app
+pnpm link --global ioncore
+```
+
+## Publishing the Library
+
+When ready to publish `ioncore` to npm:
+
+```bash
+cd packages/ioncore
+npm publish
+```
+
+## Using IonCore in Your Own Projects
+
+Once published, users can install it:
+
+```bash
+npm install ioncore react react-dom
+```
+
+And use it like this:
 
 ```tsx
-const render = async (component: JSX.Element, res: express.Response) => {
-  const { prelude } = await prerenderToNodeStream(component);
-  prelude.pipe(res);
-};
-```
+import { createServer } from 'ioncore/server';
+import { HomePage } from './pages/HomePage/index.js';
 
-### Build Process
-
-The build process uses ESBuild with Gulp for:
-
-- **TypeScript Compilation**: Converts TypeScript/TSX to JavaScript
-- **CSS Modules**: Processes CSS with scoped class names
-- **Asset Optimization**: Handles images and static files
-- **Bundle Creation**: Creates optimized bundles for production
-
-### Development Workflow
-
-1. **File Watching**: Gulp watches source files for changes
-2. **Automatic Rebuild**: ESBuild recompiles changed files
-3. **Server Restart**: Nodemon restarts the server when dist files change
-4. **Hot Development**: Changes are reflected immediately in the browser
-
-## Configuration
-
-### Environment Variables
-
-- `PORT`: Server port (default: 3000)
-
-### Build Configuration
-
-Customize the build process by modifying:
-
-- `gulpfile.js`: Build tasks and ESBuild configuration
-- `tsconfig.json`: TypeScript compiler options
-- `nodemon.json`: Development server settings
-
-## Adding New Pages
-
-1. Create a new folder in `src/pages/`
-2. Add your React component with TypeScript
-3. Import and use in `server.tsx`:
-
-```tsx
-import { NewPage } from './pages/NewPage/index.js';
-
-app.get('/new-page', (req: Request, res: Response) => {
-  render(<NewPage />, res);
+const server = createServer({
+  routes: [{ path: '/', component: HomePage }],
 });
+
+server.listen();
 ```
 
-## CSS Modules
+See [packages/ioncore/README.md](packages/ioncore/README.md) for full documentation.
 
-IonCore supports CSS Modules out of the box. Create `.module.css` files and import them:
+## CLI Commands
 
-```tsx
-import styles from './HomePage.module.css';
+- `pnpm build` - Build all packages
+- `pnpm dev:example` - Run the example app in development mode
 
-export const HomePage = () => {
-  return <div className={styles.container}>Content</div>;
-};
-```
+## Architecture
 
-## Static Assets
+### How It Works
 
-- Place static files in the `static/` directory
-- Images go in the `img/` directory
-- Both are served by Express automatically
+1. **Build System** - IonCore uses Rollup to bundle your application with automatic code splitting and asset hashing
+2. **Asset Manifest** - Generated during build, maps logical names to hashed filenames
+3. **SSR Server** - Express-based server with React 19 SSR support
+4. **CSS Modules** - PostCSS processes CSS with automatic scoping and hashing
 
-## Scripts
+### Key Features
 
-- `npm run dev`: Start development server with watch mode
-- `npm run build`: Build for production
-- `npm start`: Start production server
+- ✅ Content-based asset hashing (CSS and JS)
+- ✅ CSS Modules with automatic class name hashing
+- ✅ TypeScript support out of the box
+- ✅ Hot reload in development
+- ✅ Zero configuration required
+- ✅ Similar DX to Next.js but simpler
 
 ## License
 
-MIT License - see LICENSE file for details
+MIT
 
 ## Author
 
 Martin Podloucký (podlouckymartin@gmail.com)
-
----
-
-IonCore provides a solid foundation for building fast, SEO-friendly React applications with server-side rendering. Perfect for projects that need optimal performance and search engine optimization out of the box.
