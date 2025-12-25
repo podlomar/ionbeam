@@ -5,11 +5,11 @@ import { getAsset } from '../utils/manifest.js';
 import { AssetsProvider } from '../utils/assets-context.js';
 import path from 'node:path';
 
-// Extend Express Request to include ioncore context
+// Extend Express Request to include ionbeam context
 declare global {
   namespace Express {
     interface Request {
-      ioncore: IonCore;
+      ionbeam: IonCore;
     }
   }
 }
@@ -35,7 +35,7 @@ export function ionCoreMiddleware(options: ServerOptions = {}) {
     console.log(` - Client Script: ${clientScript}`);
     console.log(` - Style Sheet: ${styleSheet}`);
 
-    req.ioncore = {
+    req.ionbeam = {
       render: async (element: React.ReactNode) => {
         const { prelude } = await prerenderToNodeStream(
           <AssetsProvider value={{ clientScript, styleSheet }}>

@@ -1,18 +1,18 @@
 {
-  "name": "ioncore-example-basic",
+  "name": "ionbeam-example-basic",
   "version": "1.0.0",
   "description": "Basic IonCore example application",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "ioncore dev",
-    "build": "ioncore build",
-    "start": "ioncore start"
+    "dev": "ionbeam dev",
+    "build": "ionbeam build",
+    "start": "ionbeam start"
   },
   "dependencies": {
     "clsx": "^2.1.1",
     "express": "^5.2.1",
-    "ioncore": "file:../../packages/ioncore",
+    "ionbeam": "file:../../packages/ionbeam",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },

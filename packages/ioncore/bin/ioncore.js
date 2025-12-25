@@ -16,7 +16,7 @@ const packageJson = JSON.parse(
 const program = new Command();
 
 program
-  .name('ioncore')
+  .name('ionbeam')
   .description('IonCore - Pure React SSR Framework')
   .version(packageJson.version);
 

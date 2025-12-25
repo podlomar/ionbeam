@@ -1,5 +1,5 @@
 import { JSX } from "react";
-import { Page } from "ioncore";
+import { Page } from "ionbeam";
 import { Container } from "../../components/Container/index.js";
 import './styles.css';
 
