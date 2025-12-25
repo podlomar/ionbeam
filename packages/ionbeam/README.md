@@ -1,4 +1,4 @@
-# IonCore
+# IonBeam
 
 A pure React SSR framework with automatic asset hashing, CSS modules, and zero configuration.
 
@@ -14,9 +14,9 @@ A pure React SSR framework with automatic asset hashing, CSS modules, and zero c
 ## Installation
 
 ```bash
-npm install ioncore react react-dom
+npm install ionbeam react react-dom
 # or
-pnpm add ioncore react react-dom
+pnpm add ionbeam react react-dom
 ```
 
 ## Quick Start
@@ -25,14 +25,14 @@ pnpm add ioncore react react-dom
 
 ```tsx
 import { createServer, IonCoreRequest } from 'ioncore';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { HomePage } from './pages/HomePage/index.js';
 
 const app = createServer();
 
 // Define routes with full Express flexibility
-app.get('/', async (req: IonCoreRequest, res: Response) => {
-  await req.ioncore?.render(<HomePage request={req} />);
+app.get('/', async (req: Request, res: Response) => {
+  await req.ioncore?.render(<HomePage />);
 });
 
 app.listen(3000, () => {
@@ -44,16 +44,12 @@ app.listen(3000, () => {
 
 ```tsx
 import { JSX } from "react";
-import { Page, IonCoreRequest } from "ioncore";
+import { Page } from "ioncore";
 
-interface Props {
-  request: IonCoreRequest;
-}
-
-export const HomePage = ({ request }: Props): JSX.Element => {
+export const HomePage = (): JSX.Element => {
   return (
-    <Page title="Home" request={request}>
-      <h1>Welcome to IonCore!</h1>
+    <Page title="Home">
+      <h1>Welcome to IonBeam!</h1>
       <p>A flexible React SSR framework</p>
     </Page>
   );
@@ -83,170 +79,3 @@ npm run dev
 - `ioncore dev` - Start development server with watch mode
 - `ioncore build` - Build for production
 - `ioncore start` - Start production server
-
-## API
-
-### `createServer(options?)`
-
-Returns a configured Express app with IonCore middleware.
-
-**Options:**
-- `staticDir?: string` - Static files directory (default: 'dist/static')
-
-**Returns:** Express `Application` instance
-
-**Example:**
-
-```tsx
-import { createServer } from 'ioncore';
-
-const app = createServer();
-
-// Full Express API available
-app.get('/', async (req, res) => {
-  await req.ioncore?.render(<HomePage request={req} />);
-});
-
-app.post('/api/data', (req, res) => {
-  res.json({ message: 'Hello!' });
-});
-
-app.listen(3000);
-```
-
-### `ionCoreMiddleware(options?)`
-
-Middleware that adds IonCore context to request objects. Use this if you want to add IonCore to an existing Express app.
-
-```tsx
-import express from 'express';
-import { ionCoreMiddleware } from 'ioncore';
-
-const app = express();
-app.use(ionCoreMiddleware());
-
-app.get('/', async (req, res) => {
-  // Access IonCore context
-  const script = req.ioncore?.clientScript;
-  await req.ioncore?.render(<App />);
-});
-```
-
-### `<Page>` Component
-
-Reusable page component that automatically injects hashed assets.
-
-**Props:**
-- `children: ReactNode` - Page content
-- `title?: string` - Page title (default: "IonCore App")
-- `description?: string` - Meta description
-- `request: Request` - Express request object (provides IonCore context)
-
-**Example:**
-
-```tsx
-import { Page } from 'ioncore';
-import { Request } from 'express';
-
-export const MyPage = ({ request }: { request: Request }) => {
-  return (
-    <Page title="My Page" description="Page description" request={request}>
-      <h1>Hello World</h1>
-    </Page>
-  );
-};
-```
-
-### `IonCoreContext`
-
-The context object attached to `req.ioncore`:
-
-```typescript
-interface IonCoreContext {
-  clientScript?: string;        // Hashed client JS filename
-  styleSheet?: string;           // Hashed CSS filename
-  assets: {
-    get: (name: string) => string | undefined;
-  };
-  render: (component: JSX.Element) => Promise<void>;
-}
-```
-
-### `getAsset(name)`
-
-Get hashed asset filename from manifest.
-
-```tsx
-import { getAsset } from 'ioncore';
-
-const clientScript = getAsset('client.js');
-// Returns: 'client-abc12345.js'
-```
-
-### `IonCoreRequest`
-
-TypeScript type for Express requests with IonCore context. Use this in your route handlers and page components for proper type safety.
-
-```tsx
-import { IonCoreRequest } from 'ioncore';
-import { Response } from 'express';
-
-app.get('/', async (req: IonCoreRequest, res: Response) => {
-  // TypeScript knows about req.ioncore
-  const script = req.ioncore?.clientScript;
-  await req.ioncore?.render(<HomePage request={req} />);
-});
-```
-
-## Advanced Usage
-
-### Custom Layout Components
-
-You can create your own layout components instead of using the built-in `Page`:
-
-```tsx
-import { Request } from 'express';
-
-export const CustomLayout = ({ request, children }) => {
-  const { clientScript, styleSheet } = request.ioncore || {};
-
-  return (
-    <html>
-      <head>
-        <title>My App</title>
-        {styleSheet && <link rel="stylesheet" href={`/${styleSheet}`} />}
-      </head>
-      <body>
-        <nav>My Navigation</nav>
-        {children}
-        {clientScript && <script src={`/${clientScript}`} defer />}
-      </body>
-    </html>
-  );
-};
-```
-
-### Adding Custom Middleware
-
-```tsx
-import { createServer } from 'ioncore';
-
-const app = createServer();
-
-// Add logging
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
-  next();
-});
-
-// Add authentication
-app.use('/admin', authMiddleware);
-
-app.get('/admin', async (req, res) => {
-  await req.ioncore?.render(<AdminPage request={req} />);
-});
-```
-
-## License
-
-MIT
