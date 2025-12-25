@@ -1,23 +1,19 @@
 import { JSX } from "react";
-import { IonCoreRequest } from '../../types.js';
+import { useAssets } from "../../utils/assets-context.js";
 
 export interface PageProps {
-  request: IonCoreRequest;
+  title: string;
   children: React.ReactNode;
-  title?: string;
-  description?: string;
 }
 
-export const Page = ({ children, title = "IonCore", description, request }: PageProps): JSX.Element => {
-  const clientScript = request.ioncore.clientScript;
-  const styleSheet = request.ioncore.styleSheet;
+export const Page = ({ children, title }: PageProps): JSX.Element => {
+  const { styleSheet, clientScript } = useAssets();
 
   return (
     <html lang="en">
       <head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        {description && <meta name="description" content={description} />}
         <title>{title}</title>
         {styleSheet && <link rel="stylesheet" href={`/${styleSheet}`} />}
         {clientScript && <script src={`/${clientScript}`} defer />}

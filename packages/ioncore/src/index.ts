@@ -1,6 +1,6 @@
 // Server exports
 export { createServer, ionCoreMiddleware } from './server/index.js';
-export type { ServerOptions, IonCoreContext } from './server/index.js';
+export type { ServerOptions, IonCore as IonCoreContext } from './server/index.js';
 export { Page } from './components/Page/index.js';
 export type { PageProps } from './components/Page/index.js';
 

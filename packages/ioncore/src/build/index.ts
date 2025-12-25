@@ -14,6 +14,7 @@ interface BuildOptions {
 
 export class Builder {
   private cssFileName: string | null = null;
+  private clientFileName: string | null = null;
   private options: BuildOptions;
 
   public constructor(options: BuildOptions) {
@@ -135,31 +136,40 @@ export class Builder {
         sourcemap: true,
       });
 
-      // Generate manifest file
-      const manifest: Record<string, string> = {};
-
-      // Add client JS to manifest
+      // Store client JS filename
       for (const chunk of output) {
         if (chunk.type === 'chunk' && chunk.isEntry) {
-          manifest['client.js'] = chunk.fileName;
+          this.clientFileName = chunk.fileName;
         }
       }
-
-      // Add CSS filename from server build to manifest
-      if (this.cssFileName) {
-        manifest['server.css'] = this.cssFileName;
-      }
-
-      await fs.writeFile(
-        path.join(outDir, 'static/manifest.json'),
-        JSON.stringify(manifest, null, 2)
-      );
 
       await bundle.close();
     } catch (error) {
       console.error('Client build failed:', error);
       throw error;
     }
+  }
+
+  async generateManifest() {
+    const { outDir } = this.options;
+
+    const manifest: Record<string, string> = {};
+
+    // Add client JS to manifest
+    if (this.clientFileName) {
+      manifest['client.js'] = this.clientFileName;
+    }
+
+    // Add CSS filename from server build to manifest
+    if (this.cssFileName) {
+      manifest['server.css'] = this.cssFileName;
+    }
+
+    await fs.mkdir(path.join(outDir, 'static'), { recursive: true });
+    await fs.writeFile(
+      path.join(outDir, 'static/manifest.json'),
+      JSON.stringify(manifest, null, 2)
+    );
   }
 
   async copyStaticFiles() {
@@ -195,5 +205,6 @@ export class Builder {
     await this.buildServer();
     await this.buildClient();
     await this.copyStaticFiles();
+    await this.generateManifest();
   }
 }

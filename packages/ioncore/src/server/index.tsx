@@ -2,23 +2,19 @@ import { JSX } from 'react/jsx-runtime';
 import express, { Express, Request, Response, NextFunction } from 'express';
 import { prerenderToNodeStream } from 'react-dom/static';
 import { getAsset } from '../utils/manifest.js';
+import { AssetsProvider } from '../utils/assets-context.js';
 import path from 'node:path';
 
 // Extend Express Request to include ioncore context
 declare global {
   namespace Express {
     interface Request {
-      ioncore: IonCoreContext;
+      ioncore: IonCore;
     }
   }
 }
 
-export interface IonCoreContext {
-  clientScript?: string;
-  styleSheet?: string;
-  assets: {
-    get: (name: string) => string | undefined;
-  };
+export interface IonCore {
   render: (component: JSX.Element) => Promise<void>;
 }
 
@@ -35,14 +31,17 @@ export function ionCoreMiddleware(options: ServerOptions = {}) {
     const clientScript = getAsset('client.js');
     const styleSheet = getAsset('server.css');
 
+    console.log('IonCore Middleware: Attaching IonCore context to request');
+    console.log(` - Client Script: ${clientScript}`);
+    console.log(` - Style Sheet: ${styleSheet}`);
+
     req.ioncore = {
-      clientScript,
-      styleSheet,
-      assets: {
-        get: (name: string) => getAsset(name),
-      },
-      render: async (component: JSX.Element) => {
-        const { prelude } = await prerenderToNodeStream(component);
+      render: async (element: React.ReactNode) => {
+        const { prelude } = await prerenderToNodeStream(
+          <AssetsProvider value={{ clientScript, styleSheet }}>
+            {element}
+          </AssetsProvider>
+        );
         prelude.pipe(res);
       },
     };

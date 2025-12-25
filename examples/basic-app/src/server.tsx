@@ -4,7 +4,7 @@ import { HomePage } from './pages/HomePage/index.js';
 const app = createServer();
 
 app.get('/', async (req, res) => {
-  await req.ioncore.render(<HomePage request={req} />);
+  await req.ioncore.render(<HomePage />);
 });
 
 app.get('/about', async (req, res) => {

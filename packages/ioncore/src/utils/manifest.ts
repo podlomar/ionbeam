@@ -9,7 +9,7 @@ export const getManifest = (): Record<string, string> => {
   }
 
   try {
-    const manifestPath = join(process.cwd(), 'static', 'manifest.json');
+    const manifestPath = join(process.cwd(), 'dist', 'static', 'manifest.json');
     const manifestContent = readFileSync(manifestPath, 'utf-8');
     const manifest = JSON.parse(manifestContent);
     manifestCache = manifest;
@@ -20,7 +20,7 @@ export const getManifest = (): Record<string, string> => {
   }
 };
 
-export const getAsset = (assetName: string): string | undefined => {
+export const getAsset = (assetName: string): string | null => {
   const manifest = getManifest();
-  return manifest[assetName];
+  return manifest[assetName] ?? null;
 };
