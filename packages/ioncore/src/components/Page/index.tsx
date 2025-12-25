@@ -1,6 +1,5 @@
 import { JSX } from "react";
 import { IonCoreRequest } from '../../types.js';
-import './page.css';
 
 export interface PageProps {
   request: IonCoreRequest;

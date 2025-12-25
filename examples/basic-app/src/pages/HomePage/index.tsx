@@ -1,6 +1,7 @@
 import { JSX } from "react";
 import { Page, IonCoreRequest } from "ioncore";
 import { Container } from "../../components/Container/index.js";
+import './styles.css';
 
 interface Props {
   request: IonCoreRequest;
