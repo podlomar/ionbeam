@@ -1,7 +1,7 @@
 {
   "name": "ionbeam-example-basic",
   "version": "1.0.0",
-  "description": "Basic IonCore example application",
+  "description": "Basic IonBeam example application",
   "private": true,
   "type": "module",
   "scripts": {

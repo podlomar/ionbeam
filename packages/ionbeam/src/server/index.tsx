@@ -9,12 +9,12 @@ import path from 'node:path';
 declare global {
   namespace Express {
     interface Request {
-      ionbeam: IonCore;
+      ionbeam: IonBeam;
     }
   }
 }
 
-export interface IonCore {
+export interface IonBeam {
   render: (component: JSX.Element) => Promise<void>;
 }
 
@@ -23,15 +23,15 @@ export interface ServerOptions {
 }
 
 /**
- * Middleware that adds IonCore context to request object
+ * Middleware that adds IonBeam context to request object
  * This allows route handlers to access assets and rendering utilities
  */
-export function ionCoreMiddleware(options: ServerOptions = {}) {
+export function ionBeamMiddleware(options: ServerOptions = {}) {
   return (req: Request, res: Response, next: NextFunction) => {
     const clientScript = getAsset('client.js');
     const styleSheet = getAsset('server.css');
 
-    console.log('IonCore Middleware: Attaching IonCore context to request');
+    console.log('IonBeam Middleware: Attaching IonBeam context to request');
     console.log(` - Client Script: ${clientScript}`);
     console.log(` - Style Sheet: ${styleSheet}`);
 
@@ -51,7 +51,7 @@ export function ionCoreMiddleware(options: ServerOptions = {}) {
 }
 
 /**
- * Create an Express server with IonCore defaults
+ * Create an Express server with IonBeam defaults
  * Returns a configured Express app that you can customize
  */
 export function createServer(options: ServerOptions = {}): Express {
@@ -63,8 +63,8 @@ export function createServer(options: ServerOptions = {}): Express {
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
 
-  // Add IonCore context to all requests
-  app.use(ionCoreMiddleware(options));
+  // Add IonBeam context to all requests
+  app.use(ionBeamMiddleware(options));
 
   return app;
 }

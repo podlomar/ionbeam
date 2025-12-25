@@ -17,7 +17,7 @@ const program = new Command();
 
 program
   .name('ionbeam')
-  .description('IonCore - Pure React SSR Framework')
+  .description('IonBeam - Pure React SSR Framework')
   .version(packageJson.version);
 
 program

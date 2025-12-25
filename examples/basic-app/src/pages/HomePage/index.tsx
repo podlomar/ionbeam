@@ -8,7 +8,7 @@ export const HomePage = (): JSX.Element => {
     <Page title="Home Page">
       <Container>
         <h1>Home Page</h1>
-        <p>Built with IonCore - A flexible React SSR framework</p>
+        <p>Built with IonBeam - A flexible React SSR framework</p>
       </Container>
     </Page>
   );
