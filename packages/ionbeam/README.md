@@ -22,17 +22,17 @@ npm install ionbeam
 1. Create your server (`src/server.tsx`) with a simple route:
 
 ```tsx
-import { createServer, Page } from 'ionbeam';
+import { createServer } from 'ionbeam';
 import type { Request, Response } from 'express';
 
 const app = createServer();
 
 app.get('/', async (req: Request, res: Response) => {
-  await req.ionbeam.render(
-    <Page title="Home Page">
+  await req.ionbeam.renderPage("Home",
+    <>
       <h1>Home Page</h1>
       <p>Built with IonBeam - A flexible React SSR framework</p>
-    </Page>
+    </>
   );
 });
 
