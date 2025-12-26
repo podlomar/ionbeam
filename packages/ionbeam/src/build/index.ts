@@ -105,7 +105,8 @@ export class Builder {
       const bundle = await rollup({
         input: clientFiles,
         plugins: [
-          postcss.default({
+          // @ts-expect-error --- IGNORE ---
+          postcss({
             modules: {
               generateScopedName: '[local]-[hash:8]',
               localsConvention: 'camelCaseOnly',
@@ -116,7 +117,8 @@ export class Builder {
             extensions: ['.ts', '.tsx'],
             browser: true,
           }),
-          typescript.default({
+          // @ts-expect-error --- IGNORE ---
+          typescript({
             tsconfig: path.join(rootDir, 'tsconfig.json'),
             declaration: false,
             declarationMap: false,
