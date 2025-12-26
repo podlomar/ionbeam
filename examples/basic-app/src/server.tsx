@@ -4,11 +4,11 @@ import { HomePage } from './pages/HomePage/index.js';
 const app = createServer();
 
 app.get('/', async (req, res) => {
-  await req.ionbeam.render(<HomePage />);
+  await req.ionbeam.renderPage("Home", <HomePage />);
 });
 
 app.get('/about', async (req, res) => {
-  await req.ionbeam.render(<div>About Page</div>);
+  await req.ionbeam.renderPage("About", <div>About Page</div>);
 });
 
 const PORT = process.env.PORT || 3000;
