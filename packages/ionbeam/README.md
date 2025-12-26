@@ -14,25 +14,26 @@ A pure React SSR framework with automatic asset hashing, CSS modules, and zero c
 ## Installation
 
 ```bash
-npm install ionbeam react react-dom
-# or
-pnpm add ionbeam react react-dom
+npm install ionbeam
 ```
 
 ## Quick Start
 
-1. Create your server (`src/server.tsx`):
+1. Create your server (`src/server.tsx`) with a simple route:
 
 ```tsx
-import { createServer, IonCoreRequest } from 'ioncore';
-import { Request, Response } from 'express';
-import { HomePage } from './pages/HomePage/index.js';
+import { createServer, Page } from 'ionbeam';
+import type { Request, Response } from 'express';
 
 const app = createServer();
 
-// Define routes with full Express flexibility
 app.get('/', async (req: Request, res: Response) => {
-  await req.ioncore?.render(<HomePage />);
+  await req.ionbeam.render(
+    <Page title="Home Page">
+      <h1>Home Page</h1>
+      <p>Built with IonBeam - A flexible React SSR framework</p>
+    </Page>
+  );
 });
 
 app.listen(3000, () => {
@@ -40,23 +41,7 @@ app.listen(3000, () => {
 });
 ```
 
-2. Create a page using the built-in `Page` component (`src/pages/HomePage/index.tsx`):
-
-```tsx
-import { JSX } from "react";
-import { Page } from "ioncore";
-
-export const HomePage = (): JSX.Element => {
-  return (
-    <Page title="Home">
-      <h1>Welcome to IonBeam!</h1>
-      <p>A flexible React SSR framework</p>
-    </Page>
-  );
-};
-```
-
-3. Add scripts to your `package.json`:
+2. Add scripts to your `package.json`:
 
 ```json
 {

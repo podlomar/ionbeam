@@ -42,10 +42,6 @@
     "email": "podlouckymartin@gmail.com"
   },
   "license": "MIT",
-  "peerDependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
-  },
   "dependencies": {
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-typescript": "^12.3.0",
@@ -55,6 +51,8 @@
     "glob": "^13.0.0",
     "postcss": "^8.5.6",
     "postcss-modules": "^6.0.1",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
     "rollup": "^4.54.0",
     "rollup-plugin-postcss": "^4.0.2",
     "tslib": "^2.8.1",
