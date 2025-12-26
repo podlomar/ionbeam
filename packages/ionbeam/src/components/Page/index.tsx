@@ -1,12 +1,12 @@
 import { JSX } from "react";
 import { useAssets } from "../../utils/assets-context.js";
 
-export interface PageProps {
+interface Props {
   title: string;
   children: React.ReactNode;
 }
 
-export const Page = ({ children, title }: PageProps): JSX.Element => {
+export const Page = ({ children, title }: Props): JSX.Element => {
   const { styleSheet, clientScript } = useAssets();
 
   return (

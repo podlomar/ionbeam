@@ -20,10 +20,16 @@
     "./utils": {
       "types": "./dist/utils/manifest.d.ts",
       "import": "./dist/utils/manifest.js"
+    },
+    "./config/tsconfig.json": "./config/tsconfig.json",
+    "./types": {
+      "types": "./types/index.d.ts"
     }
   },
   "files": [
     "dist",
+    "config",
+    "types",
     "bin"
   ],
   "scripts": {

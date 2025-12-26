@@ -2,10 +2,6 @@
 export { createServer, ionBeamMiddleware } from './server/index.js';
 export type { ServerOptions, IonBeam } from './server/index.js';
 export { Page } from './components/Page/index.js';
-export type { PageProps } from './components/Page/index.js';
-
-// Type exports
-export type { IonBeamRequest } from './types.js';
 
 // Utility exports
 export { getAsset, getManifest } from './utils/manifest.js';
