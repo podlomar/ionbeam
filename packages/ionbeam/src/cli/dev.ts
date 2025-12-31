@@ -36,12 +36,18 @@ export async function dev() {
   }
 
   // Watch for changes
-  const watcher = watch('src/**/*.{ts,tsx,css}', {
-    cwd: rootDir,
+  const srcDir = path.join(rootDir, 'src');
+  const watcher = watch(srcDir, {
     ignoreInitial: true,
+    persistent: true,
+    ignored: /(^|[\/\\])\../, // ignore dotfiles
+    awaitWriteFinish: {
+      stabilityThreshold: 100,
+      pollInterval: 100,
+    },
   });
 
-  watcher.on('change', async (filePath) => {
+  const rebuild = async (filePath: string) => {
     console.log(`\nFile changed: ${filePath}`);
     console.log('Rebuilding...');
 
@@ -52,7 +58,10 @@ export async function dev() {
     } catch (error) {
       console.error('✗ Rebuild failed:', error);
     }
-  });
+  };
+
+  watcher.on('change', rebuild);
+  watcher.on('add', rebuild);
 
   // Handle process termination
   process.on('SIGINT', () => {
@@ -64,4 +73,7 @@ export async function dev() {
   });
 
   console.log('\n👀 Watching for changes...\n');
+
+  // Keep the function running indefinitely
+  await new Promise(() => {});
 }
